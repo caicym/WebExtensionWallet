@@ -116,6 +116,7 @@ function doneGetTransactionReceipt(o) {
     $("#info").removeClass("active1");
     var payload = base64ToArrayBuffer(o.data);
     fromAddress = o.to;
+    // 84 -> 'T'
     if (payload[0] === 84) {
         var contractAddr = Decodeuint8arr(payload.subarray(1));
         // var contractAddr = "n1xjfx3tBRerdE1cwkB4QebPU4yY8yEh6tH"
@@ -132,14 +133,15 @@ function doneGetTransactionReceipt(o) {
                 args: "[\""+ o.to + "\"]",
             }
         }).then(function (o) {
-            var content = o.result.replace(/^"/,"").replace(/"$/,"")
-            if (content.substr(0,4) == "http") {
-                imgSrc = '<img src="' + content +'" style="width:350px;height:110px;">'
-                $("#payload").append(imgSrc);               
-            } else {
-              $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
-               $("#code").text(o.result.replace(/^"/,"").replace(/"$/,""));
-            }
+            var content = JSON.parse(o.result)
+            $("#payload").append(content); 
+            // if (content.substr(0,4) == "http") {
+            //     imgSrc = '<img src="' + content +'" style="width:350px;height:110px;">'
+            //     $("#payload").append(imgSrc);               
+            // } else {
+            //   $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
+            //    $("#code").text(o.result.replace(/^"/,"").replace(/"$/,""));
+            // }
         }).catch(function (o) {
             $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
             $("#code").text("call error: " + o);
