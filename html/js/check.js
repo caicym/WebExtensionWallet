@@ -116,9 +116,9 @@ function doneGetTransactionReceipt(o) {
     $("#info").removeClass("active1");
     var payload = base64ToArrayBuffer(o.data);
     fromAddress = o.to;
-    // 84 -> 'T'
-    if (payload[0] === 84) {
-        var contractAddr = Decodeuint8arr(payload.subarray(1));
+    // 84 -> 'T', 73 --> 'I'
+    if ((payload[0] === 84 && payload[1] === 73) || (payload[0] === 0xAE && payload[1] === 0x01)) {
+        var contractAddr = Decodeuint8arr(payload.subarray(2));
         // var contractAddr = "n1xjfx3tBRerdE1cwkB4QebPU4yY8yEh6tH"
         neb.api.call({
             chainID: localSave.getItem("chainId"),
@@ -129,7 +129,7 @@ function doneGetTransactionReceipt(o) {
             gasPrice: 1000000,
             gasLimit: 2000000,
             contract: {
-                function: "hello",
+                function: "getTIE",
                 args: "[\""+ o.to + "\"]",
             }
         }).then(function (o) {
