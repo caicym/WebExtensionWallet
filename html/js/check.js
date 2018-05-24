@@ -114,8 +114,40 @@ function doneGetTransactionReceipt(o) {
     $(".modal.loading").modal("hide");
 
     $("#info").removeClass("active1");
-    $("#code").text(o.data);
-    $(".tx_hash").text(o.hash);
+    var payload = base64ToArrayBuffer(o.data);
+    fromAddress = o.to;
+    if (payload[0] === 84) {
+        var contractAddr = Decodeuint8arr(payload.subarray(1));
+        // var contractAddr = "n1xjfx3tBRerdE1cwkB4QebPU4yY8yEh6tH"
+        neb.api.call({
+            chainID: localSave.getItem("chainId"),
+            from: o.to,
+            to: contractAddr,
+            value: 0,
+            nonce: 12,
+            gasPrice: 1000000,
+            gasLimit: 2000000,
+            contract: {
+                function: "hello",
+                args: "[\""+ o.to + "\"]",
+            }
+        }).then(function (o) {
+            var content = o.result.replace(/^"/,"").replace(/"$/,"")
+            if (content.substr(0,4) == "http") {
+                imgSrc = '<img src="' + content +'" style="width:256px;height:64px;">'
+                $("#payload").append(imgSrc);               
+            } else {
+                $("#payload").append('<textarea name=code id=code cols=28 rows=6 wrap=virtual disabled></textarea>');
+               $("#code").text(o.result.replace(/^"/,"").replace(/"$/,""));
+            }
+        }).catch(function (o) {
+            $("#payload").append('<textarea name=code id=code cols=28 rows=6 wrap=virtual disabled></textarea>');
+            $("#code").text("call error: " + o);
+        });
+        // $("#code").text(contractAddr + " ### " + fromAddress);
+    } else {
+        $(".tx_hash").text(o.hash);
+    }
     $(".contract_addr").text(o.contract_address);
     $(".status").text(o.status == 1 ? "success" : (o.status == 0 ? "fail" : "pending"));
     $(".status").css("color", o.status == 1 ? "green" : (o.status == 0 ? "red" : "blue"));
@@ -129,3 +161,35 @@ function doneGetTransactionReceipt(o) {
     $(".gas-used input").val(o.gas_used).trigger("input");
 }
 
+function doneGetCallContract(o) {
+    $("#payload").append('<textarea name=code id=code cols=28 rows=6 wrap=virtual disabled></textarea>');
+    $("#code").text("Result: " + o.result + "  Err: "+ o.execute_err);
+}
+
+function base64ToArrayBuffer(base64) {
+    var binary_string =  window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array( len );
+    for (var i = 0; i < len; i++){
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes;
+}
+
+/**
+ * Convert an Uint8Array into a string.
+ *
+ * @returns {String}
+ */
+function Decodeuint8arr(uint8array){
+    return new TextDecoder("utf-8").decode(uint8array);
+}
+
+/**
+ * Convert a string into a Uint8Array.
+ *
+ * @returns {Uint8Array}
+ */
+function Encodeuint8arr(myString){
+    return new TextEncoder("utf-8").encode(myString);
+}
