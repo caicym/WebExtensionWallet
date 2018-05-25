@@ -134,14 +134,7 @@ function doneGetTransactionReceipt(o) {
             }
         }).then(function (o) {
             var content = JSON.parse(o.result)
-            $("#payload").append(content); 
-            // if (content.substr(0,4) == "http") {
-            //     imgSrc = '<img src="' + content +'" style="width:350px;height:110px;">'
-            //     $("#payload").append(imgSrc);               
-            // } else {
-            //   $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
-            //    $("#code").text(o.result.replace(/^"/,"").replace(/"$/,""));
-            // }
+            $("#atlasp_tie").replaceWith(content);
         }).catch(function (o) {
             $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
             $("#code").text("call error: " + o);
