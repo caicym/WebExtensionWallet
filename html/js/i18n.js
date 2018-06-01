@@ -112,7 +112,11 @@ var i18n = function () {
             "wallet-info/acc-addr": "Account Address",
             "wallet-info/acc-balance": "Account Balance",
             "wallet-info/private-key": "Private Key (unencrypted)",
-            "wallet-info/your-addr": "Your Address"
+            "wallet-info/your-addr": "Your Address",
+            "altlasp/commit-answer": "Commit your answer",
+            "altlasp/contract-address": "Contract",
+            "altlasp/contract-args": "Contract Args",
+            "altlasp/thanks": "Thank you for your answer"
         },
         zh: {
             amount: "金额",
@@ -209,7 +213,11 @@ var i18n = function () {
             "wallet-info/acc-addr": "钱包地址",
             "wallet-info/acc-balance": "钱包余额",
             "wallet-info/private-key": "私钥（未加密）",
-            "wallet-info/your-addr": "你的地址"
+            "wallet-info/your-addr": "你的地址",
+            "altlasp/commit-answer": "提交答案",
+            "altlasp/contract-address": "合约",
+            "altlasp/contract-args": "合约参数",
+            "altlasp/thanks": "谢谢你的参与"
         }
     };
 

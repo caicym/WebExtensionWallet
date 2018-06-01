@@ -54,11 +54,9 @@
             border-radius: 5px;
         }
 
-        .table table-striped {
+        .table table-striped {}
 
-        }
-
-        .check_words{
+        .check_words {
             font-size: 12px;
         }
     </style>
@@ -67,113 +65,162 @@
 
 <body>
     <div id="main-outer">
-    <div class=logo-main></div>
-    <div class=header></div>
+        <div class=logo-main></div>
+        <div class=header></div>
 
-    <section class="container hash">
-        <article class=row></article>
-        <section class=col>
-            <h3 data-i18n=header/check_text>Check TX Status</h3>
-            <p data-i18n=check/blah class=check_words></p>
+        <section class="container hash">
+            <article class=row></article>
+            <section class=col>
+                <h3 data-i18n=header/check_text>Check TX Status</h3>
+                <p data-i18n=check/blah class=check_words></p>
+            </section>
+            <section class="col text-center">
+                <input id=input class=form-control data-validate-order-matters="required lengthEq64" data-i18n=placeholder/tx#>
+                <button id=btn class="btn btn-primary" data-i18n=header/check>Check TX Status
+                    <span id="counterDown"></span>
+                </button>
+                <button id=btn_done class="btn btn-primary" data-i18n=header/close>Close</button>
+                <br>
+                <span class="active1 errmsg" data-i18n=check/comment1>Please enter a valid TX hash</span>
+            </section>
         </section>
-        <section class="col text-center">
-            <input id=input class=form-control data-validate-order-matters="required lengthEq64" data-i18n=placeholder/tx#>
-            <button id=btn class="btn btn-primary" data-i18n=header/check>Check TX Status<span id="counterDown"></span></button>
-            <button id=btn_done class="btn btn-primary" data-i18n=header/close>Close</button>
+
+        <section class="active1 container information" id=info>
+            <h4 data-i18n=check/tx-details>Transaction Result</h4>
             <br>
-            <span class="active1 errmsg" data-i18n=check/comment1>Please enter a valid TX hash</span>
-        </section>
-    </section>
-
-    <section class="active1 container information" id=info>
-        <h4 data-i18n=check/tx-details>Transaction Result</h4>
-        <br>
-        <table class="table table-striped">
-            <tbody>
-                <!--<tr>-->
+            <table class="table table-striped">
+                <tbody>
+                    <!--<tr>-->
                     <!--<td>TX Hash</td>-->
                     <!--<td class=tx_hash></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
                     <!--<td>Contract address</td>-->
                     <!--<td class=contract_addr></td>-->
-                <!--</tr>-->
-                <tr>
-                    <td>TxReceipt Status</td>
-                    <td class=status></td>
-                </tr>
-                <!--<tr>-->
+                    <!--</tr>-->
+                    <tr>
+                        <td>TxReceipt Status</td>
+                        <td class=status></td>
+                    </tr>
+                    <!--<tr>-->
                     <!--<td data-i18n=send-nas/from-address>From Address</td>-->
                     <!--<td class=from_address style="text-align: left;font-size: 12px;" ></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
                     <!--<td data-i18n=send-nas/to-address>To Address</td>-->
                     <!--<td class=to_address style="text-align: left;font-size: 12px;"></td>-->
-                <!--</tr>-->
-                <tr class=mod-child>
-                    <td data-i18n=amount>Amount</td>
-                    <td>
-                        <div class="amount number-comma" data-disabled data-unit=wei style="text-align: left"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Nonce</td>
-                    <td class=nonce></td>
-                </tr>
-                <tr class=mod-child>
-                    <td data-i18n=gas-price>Gas Price</td>
-                    <td style="text-align: left">
-                        <div class="gas-price number-comma"  data-disabled data-unit=wei  style="text-align: left"></div>
-                    </td>
-                </tr>
-                <tr class=mod-child>
-                    <td data-i18n=gas-limit>Gas Limit</td>
-                    <td>
-                        <div class="gas-limit number-comma" data-disabled></div>
-                    </td>
-                </tr>
-                <tr class=mod-child>
-                    <td data-i18n=gas-used>Gas Used</td>
-                    <td style="text-align: left">
-                        <div class="gas-used number-comma" data-disabled data-unit=wei></div>
-                    </td>
-                </tr>
-                <!-- <tr>
+                    <!--</tr>-->
+                    <tr class=mod-child>
+                        <td data-i18n=amount>Amount</td>
+                        <td>
+                            <div class="amount number-comma" data-disabled data-unit=wei style="text-align: left"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nonce</td>
+                        <td class=nonce></td>
+                    </tr>
+                    <tr class=mod-child>
+                        <td data-i18n=gas-price>Gas Price</td>
+                        <td style="text-align: left">
+                            <div class="gas-price number-comma" data-disabled data-unit=wei style="text-align: left"></div>
+                        </td>
+                    </tr>
+                    <tr class=mod-child>
+                        <td data-i18n=gas-limit>Gas Limit</td>
+                        <td>
+                            <div class="gas-limit number-comma" data-disabled></div>
+                        </td>
+                    </tr>
+                    <tr class=mod-child>
+                        <td data-i18n=gas-used>Gas Used</td>
+                        <td style="text-align: left">
+                            <div class="gas-used number-comma" data-disabled data-unit=wei></div>
+                        </td>
+                    </tr>
+                    <!-- <tr>
                     <td data-i18n=data>Data</td>
                     <td class=data id=payload colspan="2">
                         <textarea name=code id=code cols=28 rows=6 wrap=virtual disabled></textarea>
                     </td>
                 </tr> -->
-            </tbody>
-        </table>
-        <div id=atlasp_tie>
-        </div>
-    </section>
+                </tbody>
+            </table>
+            <div id=atlasp_tie>
+            </div>
+        </section>
 
-    <div class="fade loading modal" data-backdrop=static>
-        <div class=modal-dialog>
-            <div class=modal-content>
-                <div class=modal-body>
-                    <div class=progress>
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role=progressbar style=width:100%></div>
+        <!-- Modal: atlasp call contract  -->
+        <div class="fade modal" id=modal-altlasp-call tabindex=-1 role=dialog aria-labelledby=exampleModalLabel aria-hidden=true>
+            <div class=modal-dialog role=document>
+                <div class=modal-content>
+                    <div class=modal-header>
+                        <h5 class=modal-title id=exampleModalLabel data-i18n=altlasp/commit-answer>Commit your answer </h5>
+                        <button type=button class=close data-dismiss=modal aria-label=Close>
+                            <span aria-hidden=true>&times;</span>
+                        </button>
+                    </div>
+                    <div class=modal-body>
+                        <div>
+                            <label data-i18n=send-nas/from-address>From Address</label>
+                            <input type=text class=form-control id=altlasp_from_addr disabled>
+                        </div>
+                        <div>
+                            <label data-i18n=altlasp/contract-address>Contract</label>
+                            <input type=text class=form-control id=altlasp_contract_addr disabled>
+                        </div>
+                        <div>
+                            <label data-i18n=altlasp/contract-args>Contract Args</label>
+                            <input class=form-control id=altlasp_contract_args disabled>
+                        </div>
+                    </div>
+                    <div class=modal-footer>
+                        <button class="btn btn-secondary" data-dismiss=modal data-i18n=send-nas/close>Close</button>
+                        <button class="btn btn-primary s" data-dismiss=modal data-i18n=send-nas/check id=altlasp-btn-confirm>Confirm</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="modal fade bd-example-modal-sm listen-to-bs-shown" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+            style="display: none;" id="atlaspSecondModal" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close btn-sm" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 data-i18n=altlasp/thanks>Thank you for your answer</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class=footer></div>
+        <div class="fade loading modal" data-backdrop=static>
+            <div class=modal-dialog>
+                <div class=modal-content>
+                    <div class=modal-body>
+                        <div class=progress>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role=progressbar style=width:100%></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <script src=../popup.js></script>
-    <script src=lib/jquery-3.3.1.min.js></script>
-    <script src=lib/bootstrap-4.0.0-dist/js/bootstrap.bundle.min.js data-depends=jquery.slim></script>
-    <script src=lib/bootbox.min.js data-depends="bootstrap jquery.slim"></script>
-    <script src=lib/nebulas.js></script>
-    <script src=js/1-localSave.js></script>
-    <script src=js/home.v1.js></script>
-    <script src=js/i18n.js data-depends=jquery.slim></script>
-    <script src=js/ui-block.js data-depends="bootbox blockies jquery.slim i18n.js nebulas.js"></script>
-    <script src=js/check.js></script>
+        <div class=footer></div>
+
+        <script src=../popup.js></script>
+        <script src=lib/jquery-3.3.1.min.js></script>
+        <script src=lib/bootstrap-4.0.0-dist/js/bootstrap.bundle.min.js data-depends=jquery.slim></script>
+        <script src=lib/bootbox.min.js data-depends="bootstrap jquery.slim"></script>
+        <script src=lib/nebulas.js></script>
+        <script src=js/1-localSave.js></script>
+        <script src=js/home.v1.js></script>
+        <script src=js/i18n.js data-depends=jquery.slim></script>
+        <script src=js/ui-block.js data-depends="bootbox blockies jquery.slim i18n.js nebulas.js"></script>
+        <script src=js/check.js></script>
     </div>
 </body>
 

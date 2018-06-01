@@ -27,32 +27,32 @@ if (hash) {
 
 var interval = 0;
 function setAutoCheck() {
-    if(interval === 1000)
+    if (interval === 1000)
         return
 
-    if($(".status").text() !== "success"){
+    if ($(".status").text() !== "success") {
         interval = 1000
         var second = 15
         var number = second
         var countDown = setInterval(function () {
-            if($(".status").text() === "success" ||
-                $(".status").text() === "fail"){
+            if ($(".status").text() === "success" ||
+                $(".status").text() === "fail") {
                 clearInterval(countDown)
                 //$("#counterDown").remove()
                 $("#btn").hide()
                 $("#btn_done").show()
             }
 
-            if( $("#counterDown").length > 0){
+            if ($("#counterDown").length > 0) {
                 $("#counterDown").text(' (' + number + ')')
-            }else{
+            } else {
                 var spanTag = document.createElement("span");
                 spanTag.id = "counterDown";
                 spanTag.innerHTML = '(' + number + ')';
                 $("#btn").append(spanTag);
             }
 
-            if(number === 0){
+            if (number === 0) {
                 number = second
                 onClickBtn()
             }
@@ -130,7 +130,7 @@ function doneGetTransactionReceipt(o) {
             gasLimit: 2000000,
             contract: {
                 function: "getTIE",
-                args: "[\""+ o.to + "\"]",
+                args: "[\"" + o.to + "\"]",
             }
         }).then(function (o) {
             var content = JSON.parse(o.result)
@@ -158,14 +158,14 @@ function doneGetTransactionReceipt(o) {
 
 function doneGetCallContract(o) {
     $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
-    $("#code").text("Result: " + o.result + "  Err: "+ o.execute_err);
+    $("#code").text("Result: " + o.result + "  Err: " + o.execute_err);
 }
 
 function base64ToArrayBuffer(base64) {
-    var binary_string =  window.atob(base64);
+    var binary_string = window.atob(base64);
     var len = binary_string.length;
-    var bytes = new Uint8Array( len );
-    for (var i = 0; i < len; i++){
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
         bytes[i] = binary_string.charCodeAt(i);
     }
     return bytes;
@@ -176,7 +176,7 @@ function base64ToArrayBuffer(base64) {
  *
  * @returns {String}
  */
-function Decodeuint8arr(uint8array){
+function Decodeuint8arr(uint8array) {
     return new TextDecoder("utf-8").decode(uint8array);
 }
 
@@ -185,6 +185,100 @@ function Decodeuint8arr(uint8array){
  *
  * @returns {Uint8Array}
  */
-function Encodeuint8arr(myString){
+function Encodeuint8arr(myString) {
     return new TextEncoder("utf-8").encode(myString);
+}
+
+/**
+ * altlasp code
+ */
+var altlaspAccount;
+var altlaspAccAddress;
+var altlaspContract;
+var altlaspFunc;
+var altlaspArgs;
+var altlaspNonce = -1;
+$('#modal-altlasp-call').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var contract = button.data('contract'); // Extract info from data-* attributes
+    var func = button.data("func");
+    var args = button.data("args");
+    altlaspFunc = func;
+    altlaspArgs = args;
+    altlaspContract = contract;
+
+    chrome.storage.local.get(['keyInfo'], function (result) {
+        console.log('altlasp keyInfo Value is :' + JSON.stringify(result.keyInfo));
+        result = JSON.parse(result.keyInfo);
+
+        if (!!result) {
+            var fileJson = result.fileJson;
+            var password = result.password;
+            var account = Account.fromAddress(fileJson.address)
+            account.fromKey(fileJson, password);
+            altlaspAccAddress = account.getAddressString();
+            altlaspAccount = account;
+
+            neb.api.getAccountState(altlaspAccAddress)
+                .then(function (resp) {
+                    var nas = require("nebulas").Unit.fromBasic(resp.balance, "nas").toNumber();
+                    console.log("\tbalance: " + nas + ", nonce: " + resp.nonce);
+                    altlaspNonce = parseInt(resp.nonce || 0) + 1;
+
+                    console.log("altlasp-call: " + contract + " args: " + JSON.stringify(args) + " addr: " + altlaspAccAddress);
+                    $('#altlasp_from_addr').val(altlaspAccAddress).trigger("input");
+                    $('#altlasp_contract_addr').val(contract).trigger("input");
+                    $('#altlasp_contract_args').val(JSON.stringify({ "Function": func, "Args": JSON.stringify(args) })).trigger("input");
+
+                })
+                .catch(function (e) {
+                    // this catches e thrown by nebulas.js!neb
+                    bootbox.dialog({
+                        backdrop: true,
+                        onEscape: true,
+                        message: i18n.apiErrorToText(e.message),
+                        size: "large",
+                        title: "Error"
+                    });
+                });
+        } else {
+            if (altlaspNonce == -1) {
+                console.log("get keyInfo or getAccountState error");
+                return;
+            }
+        }
+    });
+});
+
+$('#altlasp-btn-confirm').on("click", onClickAltlaspBtn);
+function onClickAltlaspBtn() {
+    console.log("call onClickAltlaspBtn" + altlaspContract + " " + altlaspFunc + " " + altlaspArgs);
+    if (altlaspNonce == -1) {
+        console.log("onClickAltlaspBtn error");
+        return;
+    }
+    var tx = new nebulas.Transaction({
+        chainID: parseInt(localSave.getItem("chainId")),
+        from: altlaspAccount,
+        to: altlaspContract,
+        value: 0,
+        nonce: altlaspNonce,
+        gasPrice: 1000000,
+        gasLimit: 2000000,
+        contract: {
+            function: altlaspFunc,
+            args: JSON.stringify(altlaspArgs),
+        }
+    });
+    tx.signTransaction();
+
+    console.log("tx raw: " + tx.toString());
+    console.log("tx signed: " + tx.toProtoString());
+    neb.api.sendRawTransaction(tx.toProtoString())
+        .then(function (resp) {
+            console.log("sendRawTransaction resp: " + JSON.stringify(resp));
+            $('#altlasp-btn-select1').prop("disabled", true);
+            $('#altlasp-btn-select2').prop("disabled", true);
+            $('#atlaspSecondModal').modal('show');
+        })
 }
