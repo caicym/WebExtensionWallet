@@ -133,8 +133,13 @@ function doneGetTransactionReceipt(o) {
                 args: "[\"" + o.to + "\"]",
             }
         }).then(function (o) {
+            console.log(o.result)
             var content = JSON.parse(o.result)
-            $("#atlasp_tie").replaceWith(content);
+            if (!!content.payload) {
+                $("#atlasp_tie").replaceWith(content.payload);
+            } else {
+                $("#atlasp_tie").replaceWith(content);
+            }
         }).catch(function (o) {
             $("#payload").append('<textarea name=code id=code cols=40 rows=6 wrap=virtual disabled></textarea>');
             $("#code").text("call error: " + o);
